@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tính Điểm Hệ 4 - Kết Hợp</title>
+    <style>
+      :root {
+        --primary-color: #3498db;
+        --secondary-color: #2980b9;
+        --success-color: #2ecc71;
+        --danger-color: #e74c3c;
+        --light-color: #ecf0f1;
+        --dark-color: #2c3e50;
+        --border-radius: 8px;
+        --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f5f7fa;
+        color: #333;
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      header {
+        background-color: var(--dark-color);
+        color: white;
+        padding: 20px 0;
+        text-align: center;
+        margin-bottom: 30px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 2.2em;
+      }
+
+      .tab-container {
+        display: flex;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .tab {
+        padding: 12px 20px;
+        cursor: pointer;
+        background-color: #f1f1f1;
+        border: none;
+        transition: all 0.3s;
+        font-weight: bold;
+      }
+
+      .tab:hover {
+        background-color: #ddd;
+      }
+
+      .tab.active {
+        background-color: var(--primary-color);
+        color: white;
+      }
+
+      .tab-content {
+        display: none;
+        padding: 20px;
+        background-color: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        margin-bottom: 30px;
+      }
+
+      .tab-content.active {
+        display: block;
+        animation: fadeIn 0.5s;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .form-row {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+      }
+
+      .form-col {
+        flex: 1;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+        color: var(--dark-color);
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: var(--border-radius);
+        box-sizing: border-box;
+        transition: border 0.3s;
+      }
+
+      input:focus,
+      select:focus {
+        border-color: var(--primary-color);
+        outline: none;
+      }
+
+      button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s;
+        margin-right: 10px;
+      }
+
+      .btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background-color: var(--secondary-color);
+        transform: translateY(-2px);
+      }
+
+      .btn-success {
+        background-color: var(--success-color);
+        color: white;
+      }
+
+      .btn-success:hover {
+        background-color: #27ae60;
+        transform: translateY(-2px);
+      }
+
+      .btn-danger {
+        background-color: var(--danger-color);
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background-color: #c0392b;
+        transform: translateY(-2px);
+      }
+
+      .subject-list {
+        margin-top: 20px;
+      }
+
+      .subject-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 15px;
+        background-color: white;
+        border: 1px solid #eee;
+        margin-bottom: 10px;
+        border-radius: var(--border-radius);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .subject-item:hover {
+        background-color: #f8f9fa;
+      }
+
+      .message {
+        padding: 12px;
+        border-radius: var(--border-radius);
+        margin: 15px 0;
+        display: none;
+      }
+
+      .error {
+        background-color: #ffebee;
+        color: #c62828;
+        border-left: 4px solid #c62828;
+      }
+
+      .success {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+        border-left: 4px solid #2e7d32;
+      }
+
+      .result-container {
+        background-color: white;
+        padding: 20px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        margin-top: 30px;
+        display: none;
+      }
+
+      .result-header {
+        text-align: center;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .gpa-result {
+        font-size: 2em;
+        color: var(--primary-color);
+        text-align: center;
+        margin: 20px 0;
+      }
+
+      .grade-details {
+        margin-top: 20px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+      }
+
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+      }
+
+      th {
+        background-color: var(--primary-color);
+        color: white;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+
+      .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 30px;
+      }
+
+      .credit-input {
+        width: 60px;
+        display: inline-block;
+        margin-right: 10px;
+      }
+
+      .credits-section {
+        margin: 20px 0;
+        padding: 15px;
+        background-color: #f0f8ff;
+        border-radius: var(--border-radius);
+      }
+
+      @media (max-width: 768px) {
+        .form-row {
+          flex-direction: column;
+        }
+
+        .tab-container {
+          flex-direction: column;
+        }
+
+        .action-buttons {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        button {
+          width: 100%;
+          margin-bottom: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <h1>Tính Điểm Hệ 4</h1>
+        <p>
+          Công cụ tính điểm trung bình hệ 4 - Kết hợp nhập thủ công và import từ
+          Excel
+        </p>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="tab-container">
+        <button class="tab active" onclick="openTab('manualTab')">
+          Nhập Thủ Công
+        </button>
+        <button class="tab" onclick="openTab('excelTab')">
+          Import từ Excel
+        </button>
+      </div>
+
+      <!-- Tab Nhập Thủ Công -->
+      <div id="manualTab" class="tab-content active">
+        <h2>Nhập thông tin môn học</h2>
+
+        <div class="form-row">
+          <div class="form-col">
+            <div class="form-group">
+              <label for="manualSubjectName">Tên môn học:</label>
+              <input
+                type="text"
+                id="manualSubjectName"
+                placeholder="Nhập tên môn học"
+              />
+            </div>
+          </div>
+          <div class="form-col">
+            <div class="form-group">
+              <label for="manualSubjectCredit">Số tín chỉ:</label>
+              <input
+                type="number"
+                id="manualSubjectCredit"
+                min="1"
+                max="10"
+                value="3"
+              />
+            </div>
+          </div>
+          <div class="form-col">
+            <div class="form-group">
+              <label for="manualSubjectGrade">Điểm chữ:</label>
+              <select id="manualSubjectGrade">
+                <option value="4">A (4.0)</option>
+                <option value="3.5">B+ (3.5)</option>
+                <option value="3" selected>B (3.0)</option>
+                <option value="2.5">C+ (2.5)</option>
+                <option value="2">C (2.0)</option>
+                <option value="1.5">D+ (1.5)</option>
+                <option value="1">D (1.0)</option>
+                <option value="0">F (0.0)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <button id="addManualSubject" class="btn-primary">Thêm môn học</button>
+        <p id="manualMessage" class="message"></p>
+
+        <div class="subject-list" id="manualSubjectList">
+          <!-- Danh sách môn học sẽ hiển thị ở đây -->
+        </div>
+
+        <div class="action-buttons">
+          <button id="calculateManualGPA" class="btn-success">
+            Tính Điểm TB Hệ 4
+          </button>
+          <button id="resetManualForm" class="btn-danger">Xóa Tất Cả</button>
+        </div>
+
+        <div class="result-container" id="manualResultContainer">
+          <div class="result-header">
+            <h3>Kết quả tính điểm</h3>
+          </div>
+          <div class="gpa-result" id="manualGpaResult"></div>
+          <div class="grade-details" id="manualGradeDetails"></div>
+        </div>
+      </div>
+
+      <!-- Tab Import từ Excel -->
+      <div id="excelTab" class="tab-content">
+        <h2>Nhập dữ liệu từ file Excel</h2>
+
+        <div class="form-group">
+          <label for="excelFile">Chọn file Excel:</label>
+          <input type="file" id="excelFile" accept=".xlsx, .xls" />
+        </div>
+
+        <button id="importExcel" class="btn-primary">Đọc file Excel</button>
+        <p id="excelMessage" class="message"></p>
+
+        <div
+          id="creditsContainer"
+          class="credits-section"
+          style="display: none"
+        >
+          <h3>Nhập số tín chỉ cho từng môn:</h3>
+          <div id="creditsInputs"></div>
+          <button id="saveCredits" class="btn-primary">Lưu tín chỉ</button>
+        </div>
+
+        <div id="excelSubjectList" class="subject-list" style="display: none">
+          <h3>Danh sách sinh viên và điểm</h3>
+          <table id="excelStudentTable">
+            <thead>
+              <tr>
+                <th>STT</th>
+                <th>Mã SV</th>
+                <th>Họ và tên</th>
+                <th>Điểm TB hệ 4</th>
+                <th>Chi tiết môn học</th>
+              </tr>
+            </thead>
+            <tbody id="excelTableBody">
+              <!-- Dữ liệu từ Excel sẽ được thêm vào đây -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="action-buttons">
+          <button
+            id="calculateExcelGPA"
+            class="btn-success"
+            style="display: none"
+          >
+            Tính Điểm TB Hệ 4
+          </button>
+          <button id="exportExcel" class="btn-primary" style="display: none">
+            Xuất file Excel
+          </button>
+          <button id="resetExcelForm" class="btn-danger" style="display: none">
+            Xóa Dữ Liệu
+          </button>
+        </div>
+      </div>
+
+      <!-- Bảng tham chiếu thang điểm -->
+      <div class="result-container" style="margin-top: 50px">
+        <h2>Thang điểm tham khảo</h2>
+        <table>
+          <tr>
+            <th>Điểm chữ</th>
+            <th>Điểm số</th>
+            <th>Điểm hệ 4</th>
+            <th>Đánh giá</th>
+          </tr>
+          <tr>
+            <td>A</td>
+            <td>8.5 - 10</td>
+            <td>4.0</td>
+            <td>Xuất sắc</td>
+          </tr>
+          <tr>
+            <td>B+</td>
+            <td>8.0 - 8.4</td>
+            <td>3.5</td>
+            <td>Giỏi</td>
+          </tr>
+          <tr>
+            <td>B</td>
+            <td>7.0 - 7.9</td>
+            <td>3.0</td>
+            <td>Khá</td>
+          </tr>
+          <tr>
+            <td>C+</td>
+            <td>6.5 - 6.9</td>
+            <td>2.5</td>
+            <td>Trung bình khá</td>
+          </tr>
+          <tr>
+            <td>C</td>
+            <td>5.5 - 6.4</td>
+            <td>2.0</td>
+            <td>Trung bình</td>
+          </tr>
+          <tr>
+            <td>D+</td>
+            <td>5.0 - 5.4</td>
+            <td>1.5</td>
+            <td>Trung bình yếu</td>
+          </tr>
+          <tr>
+            <td>D</td>
+            <td>4.0 - 4.9</td>
+            <td>1.0</td>
+            <td>Yếu</td>
+          </tr>
+          <tr>
+            <td>F</td>
+            <td>Dưới 4.0</td>
+            <td>0.0</td>
+            <td>Kém</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+      // ========== PHẦN NHẬP THỦ CÔNG ==========
+      let manualSubjects = [];
+
+      // Tham chiếu đến các phần tử HTML (Nhập thủ công)
+      const addManualSubjectBtn = document.getElementById("addManualSubject");
+      const calculateManualGPABtn =
+        document.getElementById("calculateManualGPA");
+      const resetManualFormBtn = document.getElementById("resetManualForm");
+      const manualSubjectList = document.getElementById("manualSubjectList");
+      const manualMessage = document.getElementById("manualMessage");
+      const manualResultContainer = document.getElementById(
+        "manualResultContainer"
+      );
+      const manualGpaResult = document.getElementById("manualGpaResult");
+      const manualGradeDetails = document.getElementById("manualGradeDetails");
+
+      // Thêm môn học vào danh sách (Nhập thủ công)
+      addManualSubjectBtn.addEventListener("click", () => {
+        const subjectName = document
+          .getElementById("manualSubjectName")
+          .value.trim();
+        const subjectCredit = parseInt(
+          document.getElementById("manualSubjectCredit").value
+        );
+        const subjectGrade = parseFloat(
+          document.getElementById("manualSubjectGrade").value
+        );
+
+        if (!subjectName) {
+          showMessage("Vui lòng nhập tên môn học", "error", manualMessage);
+          return;
+        }
+
+        if (isNaN(subjectCredit)) {
+          showMessage("Số tín chỉ không hợp lệ", "error", manualMessage);
+          return;
+        }
+
+        // Thêm môn học vào mảng
+        manualSubjects.push({
+          name: subjectName,
+          credit: subjectCredit,
+          grade: subjectGrade,
+        });
+
+        // Cập nhật danh sách hiển thị
+        updateManualSubjectList();
+
+        // Xóa form nhập
+        document.getElementById("manualSubjectName").value = "";
+        document.getElementById("manualSubjectCredit").value = "3";
+        document.getElementById("manualSubjectGrade").value = "3";
+
+        showMessage(`Đã thêm môn ${subjectName}`, "success", manualMessage);
+      });
+
+      // Tính điểm trung bình hệ 4 (Nhập thủ công)
+      calculateManualGPABtn.addEventListener("click", () => {
+        if (manualSubjects.length === 0) {
+          showMessage(
+            "Vui lòng thêm ít nhất một môn học",
+            "error",
+            manualMessage
+          );
+          return;
+        }
+
+        let totalGradePoints = 0;
+        let totalCredits = 0;
+        let detailsHTML = "<p>Chi tiết từng môn:</p><ul>";
+
+        manualSubjects.forEach((subject) => {
+          totalGradePoints += subject.grade * subject.credit;
+          totalCredits += subject.credit;
+
+          // Thêm thông tin vào chi tiết
+          detailsHTML += `
+                    <li>
+                        ${subject.name} (${subject.credit} tín chỉ): 
+                        ${gradeToLetter(
+                          subject.grade
+                        )} (${subject.grade.toFixed(1)})
+                    </li>
+                `;
+        });
+
+        const gpa = totalGradePoints / totalCredits;
+
+        // Hiển thị kết quả
+        manualGpaResult.innerHTML = `Điểm trung bình hệ 4: <span style="font-size:1.5em;color:var(--primary-color);">${gpa.toFixed(
+          2
+        )}</span>`;
+        manualGradeDetails.innerHTML = detailsHTML + "</ul>";
+
+        manualResultContainer.style.display = "block";
+
+        // Cuộn xuống phần kết quả
+        manualResultContainer.scrollIntoView({ behavior: "smooth" });
+      });
+
+      // Xóa tất cả môn học (Nhập thủ công)
+      resetManualFormBtn.addEventListener("click", () => {
+        manualSubjects = [];
+        updateManualSubjectList();
+        manualResultContainer.style.display = "none";
+        showMessage("Đã xóa tất cả môn học", "success", manualMessage);
+      });
+
+      // Cập nhật danh sách môn học hiển thị (Nhập thủ công)
+      function updateManualSubjectList() {
+        manualSubjectList.innerHTML = "";
+
+        if (manualSubjects.length === 0) {
+          manualSubjectList.innerHTML =
+            '<p style="color:#777;text-align:center;">Chưa có môn học nào</p>';
+          return;
+        }
+
+        manualSubjects.forEach((subject, index) => {
+          const subjectItem = document.createElement("div");
+          subjectItem.className = "subject-item";
+
+          subjectItem.innerHTML = `
+                    <div>
+                        <strong>${subject.name}</strong> - 
+                        ${subject.credit} tín chỉ - 
+                        ${gradeToLetter(
+                          subject.grade
+                        )} (${subject.grade.toFixed(1)})
+                    </div>
+                    <button onclick="removeManualSubject(${index})" class="btn-danger" style="padding:5px 10px;font-size:0.8em;">Xóa</button>
+                `;
+
+          manualSubjectList.appendChild(subjectItem);
+        });
+      }
+
+      // Xóa môn học cụ thể (Nhập thủ công)
+      window.removeManualSubject = function (index) {
+        manualSubjects.splice(index, 1);
+        updateManualSubjectList();
+        showMessage("Đã xóa môn học", "success", manualMessage);
+      };
+
+      // ========== PHẦN IMPORT TỪ EXCEL ==========
+      let excelStudentData = {};
+      let excelSubjects = [];
+      let excelCredits = {};
+
+      // Tham chiếu đến các phần tử HTML (Import Excel)
+      const importExcelBtn = document.getElementById("importExcel");
+      const calculateExcelGPABtn = document.getElementById("calculateExcelGPA");
+      const exportExcelBtn = document.getElementById("exportExcel");
+      const resetExcelFormBtn = document.getElementById("resetExcelForm");
+      const excelMessage = document.getElementById("excelMessage");
+      const creditsContainer = document.getElementById("creditsContainer");
+      const creditsInputs = document.getElementById("creditsInputs");
+      const saveCreditsBtn = document.getElementById("saveCredits");
+      const excelTableBody = document.getElementById("excelTableBody");
+      const excelSubjectList = document.getElementById("excelSubjectList");
+
+      // Nhập dữ liệu từ Excel
+      importExcelBtn.addEventListener("click", () => {
+        const fileInput = document.getElementById("excelFile");
+        const file = fileInput.files[0];
+
+        if (!file) {
+          showMessage("Vui lòng chọn file Excel", "error", excelMessage);
+          return;
+        }
+
+        showMessage("Đang xử lý file Excel...", "", excelMessage);
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: "array" });
+
+            // Reset dữ liệu
+            excelStudentData = {};
+            excelSubjects = [];
+
+            // Lấy danh sách các sheet (môn học)
+            workbook.SheetNames.forEach((sheetName) => {
+              const sheet = workbook.Sheets[sheetName];
+              const jsonData = XLSX.utils.sheet_to_json(sheet);
+
+              // Thêm vào danh sách môn học
+              excelSubjects.push(sheetName);
+
+              // Xử lý dữ liệu từng sheet
+              jsonData.forEach((row) => {
+                const studentId = row["Mã SV"] || row["maSV"] || "";
+                const lastName = row["Họ lót"] || row["hoLot"] || "";
+                const firstName = row["Tên"] || row["ten"] || "";
+                const score = parseFloat(
+                  row["Điểm thi"] || row["diemThi"] || 0
+                );
+
+                if (!studentId || isNaN(score)) return;
+
+                // Thêm vào studentData
+                if (!excelStudentData[studentId]) {
+                  excelStudentData[studentId] = {
+                    studentId,
+                    lastName,
+                    firstName,
+                    scores: {},
+                    scores4: {},
+                  };
+                }
+
+                excelStudentData[studentId].scores[sheetName] = score;
+                excelStudentData[studentId].scores4[sheetName] =
+                  convertScoreTo4Scale(score);
+              });
+            });
+
+            // Hiển thị phần nhập tín chỉ
+            creditsInputs.innerHTML = "";
+            excelSubjects.forEach((subject) => {
+              const div = document.createElement("div");
+              div.innerHTML = `
+                            <label>${subject}:</label>
+                            <input type="number" min="1" max="10" value="3" class="credit-input" id="excelCredit_${subject}"> tín chỉ
+                        `;
+              creditsInputs.appendChild(div);
+            });
+
+            creditsContainer.style.display = "block";
+            showMessage(
+              `Đã đọc dữ liệu từ ${excelSubjects.length} môn học và ${
+                Object.keys(excelStudentData).length
+              } sinh viên`,
+              "success",
+              excelMessage
+            );
+
+            calculateExcelGPABtn.style.display = "inline-block";
+            resetExcelFormBtn.style.display = "inline-block";
+          } catch (error) {
+            showMessage(
+              "Lỗi khi đọc file Excel: " + error.message,
+              "error",
+              excelMessage
+            );
+          }
+        };
+
+        reader.onerror = function () {
+          showMessage("Lỗi khi đọc file", "error", excelMessage);
+        };
+
+        reader.readAsArrayBuffer(file);
+      });
+
+      // Lưu tín chỉ các môn (Import Excel)
+      saveCreditsBtn.addEventListener("click", () => {
+        excelCredits = {};
+        excelSubjects.forEach((subject) => {
+          const creditInput = document.getElementById(`excelCredit_${subject}`);
+          excelCredits[subject] = parseInt(creditInput.value) || 3;
+        });
+
+        showMessage(
+          `Đã lưu tín chỉ cho ${excelSubjects.length} môn học`,
+          "success",
+          excelMessage
+        );
+
+        // Tính toán và hiển thị kết quả ngay
+        calculateExcelGPA();
+      });
+
+      // Tính điểm hệ 4 (Import Excel)
+      function calculateExcelGPA() {
+        if (
+          Object.keys(excelStudentData).length === 0 ||
+          excelSubjects.length === 0
+        ) {
+          showMessage("Chưa có dữ liệu để tính toán", "error", excelMessage);
+          return;
+        }
+
+        // Tính điểm trung bình hệ 4 cho từng sinh viên
+        Object.values(excelStudentData).forEach((student) => {
+          let totalScore = 0;
+          let totalCredits = 0;
+
+          excelSubjects.forEach((subject) => {
+            if (student.scores4[subject] !== undefined) {
+              totalScore +=
+                student.scores4[subject] * (excelCredits[subject] || 3);
+              totalCredits += excelCredits[subject] || 3;
+            }
+          });
+
+          student.averageScore4 =
+            totalCredits > 0 ? totalScore / totalCredits : 0;
+        });
+
+        // Chuyển đổi studentData thành mảng và sắp xếp
+        const sortedStudents = Object.values(excelStudentData).sort(
+          (a, b) => b.averageScore4 - a.averageScore4
+        );
+
+        // Hiển thị kết quả
+        excelTableBody.innerHTML = "";
+
+        sortedStudents.forEach((student, index) => {
+          const row = document.createElement("tr");
+
+          // Tạo chuỗi chi tiết các môn
+          let subjectDetails = "";
+          excelSubjects.forEach((subject) => {
+            if (student.scores[subject] !== undefined) {
+              subjectDetails += `
+                            <div style="margin-bottom: 5px;">
+                                <strong>${subject}:</strong> 
+                                ${student.scores[subject].toFixed(
+                                  1
+                                )} (${convertToLetterGrade(
+                student.scores4[subject]
+              )})
+                            </div>
+                        `;
+            }
+          });
+
+          row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${student.studentId}</td>
+                    <td>${student.lastName} ${student.firstName}</td>
+                    <td>${student.averageScore4.toFixed(2)}</td>
+                    <td>${subjectDetails}</td>
+                `;
+
+          excelTableBody.appendChild(row);
+        });
+
+        excelSubjectList.style.display = "block";
+        exportExcelBtn.style.display = "inline-block";
+
+        // Cuộn xuống phần kết quả
+        excelSubjectList.scrollIntoView({ behavior: "smooth" });
+      }
+
+      calculateExcelGPABtn.addEventListener("click", calculateExcelGPA);
+
+      // Xuất file Excel (Import Excel)
+      exportExcelBtn.addEventListener("click", () => {
+        if (Object.keys(excelStudentData).length === 0) {
+          showMessage("Chưa có dữ liệu để xuất", "error", excelMessage);
+          return;
+        }
+
+        // Chuẩn bị dữ liệu
+        const exportData = Object.values(excelStudentData)
+          .sort((a, b) => b.averageScore4 - a.averageScore4)
+          .map((student, index) => {
+            const row = {
+              Rank: index + 1,
+              "Mã SV": student.studentId,
+              "Họ và tên": `${student.lastName} ${student.firstName}`,
+              "Điểm TB hệ 4": student.averageScore4.toFixed(2),
+            };
+
+            // Thêm điểm từng môn
+            excelSubjects.forEach((subject) => {
+              if (student.scores[subject] !== undefined) {
+                row[subject] = `${student.scores[subject].toFixed(
+                  1
+                )} (${convertToLetterGrade(student.scores4[subject])})`;
+              } else {
+                row[subject] = "-";
+              }
+            });
+
+            return row;
+          });
+
+        // Tạo worksheet
+        const ws = XLSX.utils.json_to_sheet(exportData);
+
+        // Tạo workbook
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Bảng điểm hệ 4");
+
+        // Xuất file
+        XLSX.writeFile(wb, "Bang_diem_he_4.xlsx");
+      });
+
+      // Xóa dữ liệu Excel
+      resetExcelFormBtn.addEventListener("click", () => {
+        excelStudentData = {};
+        excelSubjects = [];
+        excelCredits = {};
+        excelTableBody.innerHTML = "";
+        creditsContainer.style.display = "none";
+        excelSubjectList.style.display = "none";
+        calculateExcelGPABtn.style.display = "none";
+        exportExcelBtn.style.display = "none";
+        resetExcelFormBtn.style.display = "none";
+        document.getElementById("excelFile").value = "";
+        showMessage("Đã xóa tất cả dữ liệu", "success", excelMessage);
+      });
+
+      // ========== HÀM CHUNG ==========
+      // Chuyển đổi điểm hệ 10 sang hệ 4
+      function convertScoreTo4Scale(score) {
+        if (score >= 8.5) return 4.0;
+        if (score >= 8.0) return 3.5;
+        if (score >= 7.0) return 3.0;
+        if (score >= 6.5) return 2.5;
+        if (score >= 5.5) return 2.0;
+        if (score >= 5.0) return 1.5;
+        if (score >= 4.0) return 1.0;
+        return 0.0;
+      }
+
+      // Chuyển điểm hệ 4 sang chữ
+      function convertToLetterGrade(score4) {
+        if (score4 === 4.0) return "A";
+        if (score4 === 3.5) return "B+";
+        if (score4 === 3.0) return "B";
+        if (score4 === 2.5) return "C+";
+        if (score4 === 2.0) return "C";
+        if (score4 === 1.5) return "D+";
+        if (score4 === 1.0) return "D";
+        return "F";
+      }
+
+      // Chuyển điểm số sang điểm chữ (dùng cho nhập thủ công)
+      function gradeToLetter(grade) {
+        if (grade === 4) return "A";
+        if (grade === 3.5) return "B+";
+        if (grade === 3) return "B";
+        if (grade === 2.5) return "C+";
+        if (grade === 2) return "C";
+        if (grade === 1.5) return "D+";
+        if (grade === 1) return "D";
+        return "F";
+      }
+
+      // Hiển thị thông báo
+      function showMessage(text, type, element) {
+        element.textContent = text;
+        element.className = `message ${type}`;
+        element.style.display = "block";
+
+        // Ẩn thông báo sau 3 giây (trừ các thông báo success)
+        if (type !== "success") {
+          setTimeout(() => {
+            element.style.display = "none";
+          }, 3000);
+        }
+      }
+
+      // Chuyển tab
+      function openTab(tabId) {
+        // Ẩn tất cả các tab content
+        const tabContents = document.getElementsByClassName("tab-content");
+        for (let i = 0; i < tabContents.length; i++) {
+          tabContents[i].classList.remove("active");
+        }
+
+        // Xóa active class từ tất cả các tab
+        const tabs = document.getElementsByClassName("tab");
+        for (let i = 0; i < tabs.length; i++) {
+          tabs[i].classList.remove("active");
+        }
+
+        // Hiển thị tab được chọn và thêm active class
+        document.getElementById(tabId).classList.add("active");
+        event.currentTarget.classList.add("active");
+      }
+    </script>
+  </body>
+</html>
