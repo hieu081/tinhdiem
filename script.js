@@ -908,61 +908,57 @@ function updateExcelTable(page) {
 
   excelTableBody.innerHTML = paginatedStudents
     .map((student) => {
-      // Tạo chi tiết điểm từng môn
       let subjectDetails = excelSubjects
-        .map((subject) => {
-          if (
+        .filter(
+          (subject) =>
             student.scores[subject] !== undefined &&
             student.scores[subject] !== ""
-          ) {
-            const isFailed = student.scores4[subject] === 0;
-            return `
-                            <div class="mb-1 ${
-                              isFailed ? "failed-subject" : ""
-                            }">
-                                <span class="font-medium">${subject}:</span>
-                                ${
-                                  student.scores[subject] === 0
-                                    ? "Không đạt"
-                                    : student.scores[subject].toFixed(1)
-                                }
-                                (${convertToLetterGrade(
-                                  student.scores4[subject]
-                                )}${isFailed ? ", Không đạt" : ""})
-                            </div>
-                        `;
-          }
-          return `<div class="mb-1"><span class="font-medium">${subject}:</span> -</div>`;
+        )
+        .map((subject) => {
+          const isFailed = student.scores4[subject] === 0;
+          return `
+            <div class="mb-1 ${isFailed ? "failed-subject" : ""}">
+              <span class="font-medium">${subject}:</span>
+              ${
+                student.scores[subject] === 0
+                  ? "Không đạt"
+                  : student.scores[subject].toFixed(1)
+              }
+              (${convertToLetterGrade(student.scores4[subject])}${
+            isFailed ? ", Không đạt" : ""
+          })
+            </div>
+          `;
         })
         .join("");
 
-      // Hiển thị hàng trong bảng
+      if (!subjectDetails) {
+        subjectDetails =
+          '<div class="text-gray-500 text-sm">Không có dữ liệu điểm</div>';
+      }
+
       return `
-                <tr class="hover:bg-gray-50">
-                    <td class="border p-2 sm:p-3" data-label="Rank">${
-                      student.rank
-                    }</td>
-                    <td class="border p-2 sm:p-3 font-medium" data-label="Mã SV">${
-                      student.studentId
-                    }</td>
-                    <td class="border p-2 sm:p-3" data-label="Họ và tên">${
-                      student.lastName
-                    } ${student.firstName}</td>
-                    <td class="border p-2 sm:p-3 font-medium ${getGpaColorClass(
-                      student.averageScore4
-                    )}" data-label="Điểm TB hệ 4">${student.averageScore4.toFixed(
-        2
-      )}</td>
-                    <td class="border p-2 sm:p-3 text-sm" data-label="Chi tiết môn">${subjectDetails}</td>
-                    <td class="border p-2 sm:p-3" data-label="Hành động">
-                        <button onclick="showStudentDetail('${
-                          student.studentId
-                        }')" class="px-2 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 text-sm">
-                            <i class="fas fa-info-circle"></i>
-                        </button>
-                    </td>
-                </tr>
-            `;
+        <tr class="hover:bg-gray-50">
+          <td class="border p-2 sm:p-3" data-label="Rank">${student.rank}</td>
+          <td class="border p-2 sm:p-3 font-medium" data-label="Mã SV">${
+            student.studentId
+          }</td>
+          <td class="border p-2 sm:p-3" data-label="Họ và tên">${
+            student.lastName
+          } ${student.firstName}</td>
+          <td class="border p-2 sm:p-3 font-medium ${getGpaColorClass(
+            student.averageScore4
+          )}" data-label="Điểm TB hệ 4">${student.averageScore4.toFixed(2)}</td>
+          <td class="border p-2 sm:p-3 text-sm" data-label="Chi tiết môn">${subjectDetails}</td>
+          <td class="border p-2 sm:p-3" data-label="Hành động">
+            <button onclick="showStudentDetail('${
+              student.studentId
+            }')" class="px-2 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 text-sm">
+              <i class="fas fa-info-circle"></i>
+            </button>
+          </td>
+        </tr>
+      `;
     })
     .join("");
 
@@ -997,65 +993,49 @@ function showStudentDetail(studentId) {
   }
 
   const content = `
-              <p><strong>Mã SV:</strong> ${student.studentId}</p>
-              <p><strong>Họ và tên:</strong> ${student.lastName} ${
-    student.firstName
-  }</p>
-              <p><strong>Điểm trung bình hệ 4:</strong> <span class="${getGpaColorClass(
-                student.averageScore4
-              )}">${student.averageScore4.toFixed(2)}</span></p>
-              <p><strong>Xếp loại:</strong> ${getGradeClassification(
-                student.averageScore4
-              )}</p>
-              <h4 class="font-medium mt-4 mb-2">Chi tiết điểm môn học:</h4>
-              <div class="space-y-2">
-                ${excelSubjects
-                  .map((subject) => {
-                    const score =
-                      student.scores[subject] !== undefined &&
-                      student.scores[subject] !== ""
-                        ? student.scores[subject]
-                        : "-";
-                    const score4 =
-                      student.scores4[subject] !== undefined
-                        ? student.scores4[subject]
-                        : "-";
-                    const isFailed = score4 === 0;
-                    return `
-                      <p class="${isFailed ? "failed-subject" : ""}">
-                        <span class="font-medium">${subject}:</span>
-                        ${
-                          score === 0
-                            ? "Không đạt"
-                            : score === "-"
-                            ? "-"
-                            : score.toFixed(1)
-                        }
-                        ${
-                          score4 !== "-"
-                            ? `(${convertToLetterGrade(score4)}${
-                                isFailed ? ", Không đạt" : ""
-                              })`
-                            : ""
-                        }
-                        ${
-                          excelCredits[subject]
-                            ? `(${excelCredits[subject]} tín chỉ)`
-                            : ""
-                        }
-                      </p>
-                    `;
-                  })
-                  .join("")}
-              </div>
+    <p><strong>Mã SV:</strong> ${student.studentId}</p>
+    <p><strong>Họ và tên:</strong> ${student.lastName} ${student.firstName}</p>
+    <p><strong>Điểm trung bình hệ 4:</strong> <span class="${getGpaColorClass(
+      student.averageScore4
+    )}">${student.averageScore4.toFixed(2)}</span></p>
+    <p><strong>Xếp loại:</strong> ${getGradeClassification(
+      student.averageScore4
+    )}</p>
+    <h4 class="font-medium mt-4 mb-2">Chi tiết điểm môn học:</h4>
+    <div class="space-y-2">
+      ${excelSubjects
+        .filter(
+          (subject) =>
+            student.scores[subject] !== undefined &&
+            student.scores[subject] !== ""
+        )
+        .map((subject) => {
+          const score = student.scores[subject];
+          const score4 = student.scores4[subject];
+          const isFailed = score4 === 0;
+          return `
+            <p class="${isFailed ? "failed-subject" : ""}">
+              <span class="font-medium">${subject}:</span>
+              ${score === 0 ? "Không đạt" : score.toFixed(1)}
+              (${convertToLetterGrade(score4)}${isFailed ? ", Không đạt" : ""})
               ${
-                student.failedSubjects.length > 0
-                  ? `<p class="failed-subject mt-4"><strong>Môn không đạt:</strong> ${student.failedSubjects.join(
-                      ", "
-                    )}</p>`
+                excelCredits[subject]
+                  ? `(${excelCredits[subject]} tín chỉ)`
                   : ""
               }
-            `;
+            </p>
+          `;
+        })
+        .join("")}
+    </div>
+    ${
+      student.failedSubjects.length > 0
+        ? `<p class="failed-subject mt-4"><strong>Môn không đạt:</strong> ${student.failedSubjects.join(
+            ", "
+          )}</p>`
+        : ""
+    }
+  `;
 
   document.getElementById("studentDetailContent").innerHTML = content;
   studentDetailModal.classList.remove("hidden");
